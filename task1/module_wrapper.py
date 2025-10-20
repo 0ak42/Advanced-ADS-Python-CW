@@ -1,4 +1,4 @@
-from data_extract import read_csv_file
+from task1.data_extract import read_csv_file
 from clrsPython.Chapter11.chained_hashtable import ChainedHashTable
 
 def norm(s: str) -> str:
