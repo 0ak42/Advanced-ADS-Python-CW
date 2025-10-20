@@ -1,4 +1,7 @@
 #Task 2
+#Oskar Kane
+#Jeet Nadiapara
+#20/10/25
 
-print("hello world pt2")
-#this work 
+#Helpful tips/notes (remove at final)
+#Chapter 20-22
