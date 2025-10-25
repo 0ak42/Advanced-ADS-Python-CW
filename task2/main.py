@@ -1,6 +1,3 @@
-import sys, os
-sys.path.append(os.path.dirname(os.path.dirname(__file__)))
-
 #Task 2
 #Oskar Kane
 #Jeet Nadiapara
@@ -30,7 +27,8 @@ Data Structure: Weighted adjacency list
 
 # === Step 1: Import from CLRS Library ===
 # Assumes clrsPython is already extracted and accessible in sys.path.
-
+import sys, os
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from clrsPython.Chapter_22.dijkstra import dijkstra
 from clrsPython.Utility_functions.adjacency_list_graph import AdjacencyListGraph
 
