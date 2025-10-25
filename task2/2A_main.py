@@ -3,9 +3,6 @@
 #Jeet Nadiapara
 #20/10/25-
 
-#Helpful tips/notes (remove at final)
-#Chapter 20-22
-
 ####Basic structure####
 #1-fetch data and libraries needed
 import sys
