@@ -12,7 +12,7 @@ csv_file = os.path.join(base_dir, "Weighted_Test_Data.csv")
 libraries_path = os.path.join(base_dir, "Libraries")
 sys.path.append(libraries_path)
 
-# Import custom graph and algorithm
+# Import From the libraries
 from adjacency_list_graph import AdjacencyListGraph
 from dijkstra import dijkstra
 
