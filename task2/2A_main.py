@@ -1,20 +1,22 @@
 import sys, os, csv
-
-# === Step 1: Dynamically add clrsPython and all its subfolders ===
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 clrs_dir = os.path.join(base_dir, "clrsPython")
-
-# Recursively add all folders in clrsPython to sys.path
 for root, dirs, files in os.walk(clrs_dir):
     if root not in sys.path:
         sys.path.append(root)
+
 
 # === Step 2: Import libraries ===
 # These imports will work because we added all subdirectories
 from clrsPython.UtilityFunctions.adjacency_list_graph import AdjacencyListGraph
 from clrsPython.Chapter22.dijkstra import dijkstra
 
-# === Step 3: Load CSV data ===
+#importing the libraries
+from UtilityFunctions.adjacency_list_graph import AdjacencyListGraph
+from Chapter22.dijkstra import dijkstra
+
+
+#importing the csv file
 csv_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Weighted_Test_Data.csv")
 
 edges = []
@@ -39,7 +41,7 @@ with open(csv_file, 'r', newline='', encoding='utf-8') as f:
         except ValueError:
             pass
 
-# === Step 4: Build Graph ===
+#buid graph
 vertex_to_index = {v: i for i, v in enumerate(sorted(stations))}
 index_to_vertex = {i: v for v, i in vertex_to_index.items()}
 
@@ -57,7 +59,7 @@ for u, v, w in edges:
         except RuntimeError:
             pass
 
-# === Step 5: Dijkstra Shortest Path ===
+#applying the dikstra algorithm
 source = 'LineOne_One'
 target = 'LineThree_Five'
 
@@ -70,7 +72,7 @@ target_idx = vertex_to_index[target]
 
 dist, parent = dijkstra(G, source_idx)
 
-# === Step 6: Reconstruct Path ===
+#reformating the path
 def get_path(parent, target_idx, index_to_vertex):
     path = []
     current = target_idx
@@ -85,7 +87,7 @@ def get_path(parent, target_idx, index_to_vertex):
 
 path = get_path(parent, target_idx, index_to_vertex)
 
-# === Step 7: Display Results ===
+#  Task 2A:Your shotest route will be of ===
 print("=== Task 2A: Journey Planner ===\n")
 print(f"Shortest path from {source} to {target}: {' → '.join(path)}")
 print(f"Total travel time: {dist[target_idx]} minutes")
