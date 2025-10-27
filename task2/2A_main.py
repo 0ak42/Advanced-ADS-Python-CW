@@ -1,41 +1,91 @@
-#Task 2A
-#Oskar Kane
-#Jeet Nadiapara
-#20/10/25-
+import sys, os, csv
 
-#Helpful tips/notes (remove at final)
-#Chapter 20-22
+# === Step 1: Dynamically add clrsPython and all its subfolders ===
+base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+clrs_dir = os.path.join(base_dir, "clrsPython")
 
-####Basic structure####
-#1-fetch data and libraries needed
-import sys
-import os
+# Recursively add all folders in clrsPython to sys.path
+for root, dirs, files in os.walk(clrs_dir):
+    if root not in sys.path:
+        sys.path.append(root)
 
-from utils.data_api import (
-    init_index, is_operational, get_station_id, get_station_name, create_edge, get_edge_info, get_all_stations
-)
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from clrsPython.Chapter22.dijkstra import dijkstra
+# === Step 2: Import libraries ===
+# These imports will work because we added all subdirectories
+from UtilityFunctions.adjacency_list_graph import AdjacencyListGraph
+from Chapter22.dijkstra import dijkstra
 
-#2-Data input for both stations (currently fixed for testing
-StartStation="LineTwo_One"
-EndStation="LineThree_Five"
+# === Step 3: Load CSV data ===
+csv_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Weighted_Test_Data.csv")
 
-#3-Format data (not needed currently as fixed data)
+edges = []
+stations = set()
 
-#4-Only look at data with 4 columns
-#If position 3 is empty go next
+with open(csv_file, 'r', newline='', encoding='utf-8') as f:
+    reader = csv.reader(f)
+    for row in reader:
+        # Expected columns: LineName, Station1, Station2, Weight
+        if len(row) < 4:
+            continue
+        line, s1, s2, weight = [r.strip() for r in row[:4]]
 
-#5 create graph with csv data
+        if s1:
+            stations.add(s1)
+        if s2:
+            stations.add(s2)
 
-#6-Dijkstra library import
+        try:
+            weight = float(weight)
+            edges.append((s1, s2, weight))
+        except ValueError:
+            pass
 
-#def dijkstra(G, s):
-#Arguments:
-#G -- a directed, weighted graph
-#s -- index of source vertex
-#Returns:
-#d -- distances from source vertex s
-#pi -- predecessors
+# === Step 4: Build Graph ===
+vertex_to_index = {v: i for i, v in enumerate(sorted(stations))}
+index_to_vertex = {i: v for v, i in vertex_to_index.items()}
 
-#7-Format output (fetch from data maybe)
+G = AdjacencyListGraph(len(stations), weighted=True)
+added_edges = set()
+
+for u, v, w in edges:
+    u_idx = vertex_to_index[u]
+    v_idx = vertex_to_index[v]
+    edge_key = frozenset([u_idx, v_idx])
+    if edge_key not in added_edges:
+        try:
+            G.insert_edge(u_idx, v_idx, w)
+            added_edges.add(edge_key)
+        except RuntimeError:
+            pass
+
+# === Step 5: Dijkstra Shortest Path ===
+source = 'LineOne_One'
+target = 'LineThree_Five'
+
+if source not in vertex_to_index or target not in vertex_to_index:
+    print(f"Error: Either {source} or {target} is missing in the CSV data.")
+    sys.exit(1)
+
+source_idx = vertex_to_index[source]
+target_idx = vertex_to_index[target]
+
+dist, parent = dijkstra(G, source_idx)
+
+# === Step 6: Reconstruct Path ===
+def get_path(parent, target_idx, index_to_vertex):
+    path = []
+    current = target_idx
+    visited = set()
+    while current is not None and current not in visited:
+        path.insert(0, index_to_vertex[current])
+        visited.add(current)
+        if parent[current] == current or parent[current] == -1:
+            break
+        current = parent[current]
+    return path
+
+path = get_path(parent, target_idx, index_to_vertex)
+
+# === Step 7: Display Results ===
+print("=== Task 2A: Journey Planner ===\n")
+print(f"Shortest path from {source} to {target}: {' → '.join(path)}")
+print(f"Total travel time: {dist[target_idx]} minutes")
